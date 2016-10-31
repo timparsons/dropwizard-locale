@@ -14,6 +14,7 @@ import io.timparsons.dropwizard.views.config.LocaleMap;
 public class FreemarkerLocaleConfiguration extends Configuration implements LocaleConfiguration {
 
     private Table<String, String, LocaleMap> localeTable;
+    private Locale defaultLocale = Locale.getDefault();
 
     public FreemarkerLocaleConfiguration(Version incompatibleImprovements) {
         super(incompatibleImprovements);
@@ -23,6 +24,8 @@ public class FreemarkerLocaleConfiguration extends Configuration implements Loca
     public void setSetting(String name, String value) throws TemplateException {
         if (name.equals("locale")) {
             localeTable = LocaleConfigurationUtility.getLocaleFiles(value);
+        } else if (name.equals("defaultLocale")) {
+            defaultLocale = Locale.forLanguageTag(value);
         } else if (!name.equals("STAGE")) {
             super.setSetting(name, value);
         }
@@ -30,6 +33,10 @@ public class FreemarkerLocaleConfiguration extends Configuration implements Loca
 
     @Override
     public LocaleMap getLocaleBundle(Locale locale, String bundle) {
-        return localeTable.get(locale.getLanguage(), bundle);
+        if (localeTable.contains(locale.getLanguage(), bundle)) {
+            return localeTable.get(locale.getLanguage(), bundle);
+        } else {
+            return localeTable.get(defaultLocale.getLanguage(), bundle);
+        }
     }
 }

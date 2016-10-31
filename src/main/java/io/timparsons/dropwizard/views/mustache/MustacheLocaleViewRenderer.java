@@ -105,7 +105,8 @@ public class MustacheLocaleViewRenderer implements ViewRenderer {
 
     @Override
     public void configure(Map<String, String> baseConfig) {
-        localeLoader.setConfig(new MustacheLocaleConfiguration(baseConfig.get("locale")));
+        localeLoader
+                .setConfig(new MustacheLocaleConfiguration(baseConfig.get("locale"), baseConfig.get("defaultLocale")));
 
         boolean devMode = false;
 
