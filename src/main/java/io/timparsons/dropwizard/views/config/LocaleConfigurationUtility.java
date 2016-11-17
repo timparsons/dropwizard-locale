@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -14,6 +16,7 @@ import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
 import com.google.common.collect.Tables;
 
+import io.timparsons.dropwizard.views.LocaleView;
 import io.timparsons.dropwizard.views.config.LocaleMap.LocaleMapValue;
 
 public class LocaleConfigurationUtility {
@@ -54,6 +57,26 @@ public class LocaleConfigurationUtility {
         }
         
         return localeTable;
+    }
+
+    public static List<String> getViewBundles(Class<? extends LocaleView> localeViewClass) {
+        List<String> viewBundles = new LinkedList<>();
+
+        Class<?> currentClass = localeViewClass;
+        while (currentClass != LocaleView.class) {
+            Bundles bundlesAnnon = currentClass.getAnnotation(Bundles.class);
+
+            if (bundlesAnnon != null) {
+                String[] bundles = bundlesAnnon.value();
+                //things up the hierarchy are more important, so add them at the beginning of the list
+                for (int i = 0; i < bundles.length; i++) {
+                    viewBundles.add(i, bundles[i]);
+                }
+            }
+            currentClass = currentClass.getSuperclass();
+        }
+
+        return viewBundles;
     }
 
     private static Cell<String, String, LocaleMap> getLocaleFile(File localeFile)

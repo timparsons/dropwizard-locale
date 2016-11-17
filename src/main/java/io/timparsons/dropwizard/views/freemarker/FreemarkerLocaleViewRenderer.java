@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -24,7 +25,7 @@ import freemarker.template.Version;
 import io.dropwizard.views.View;
 import io.dropwizard.views.ViewRenderer;
 import io.timparsons.dropwizard.views.LocaleView;
-import io.timparsons.dropwizard.views.config.Bundles;
+import io.timparsons.dropwizard.views.config.LocaleConfigurationUtility;
 import io.timparsons.dropwizard.views.config.LocaleMap;
 import io.timparsons.dropwizard.views.config.freemarker.FreemarkerLocaleConfiguration;
 
@@ -62,11 +63,9 @@ public class FreemarkerLocaleViewRenderer implements ViewRenderer {
             final FreemarkerLocaleConfiguration configuration = configurationCache.getUnchecked(key.getLeft());
 
             Class<? extends LocaleView> localeViewClass = key.getLeft();
-            Bundles bundlesAnnon = localeViewClass.getAnnotation(Bundles.class);
+            List<String> viewBundles = LocaleConfigurationUtility.getViewBundles(localeViewClass);
 
-            if (bundlesAnnon != null) {
-                String[] viewBundles = bundlesAnnon.value();
-
+            if (!viewBundles.isEmpty()) {
                 LocaleMap.Builder localeBundlesBuilder = LocaleMap.builder();
                 for (String bundle : viewBundles) {
                     localeBundlesBuilder.putAll(configuration.getLocaleBundle(key.getRight(), bundle));

@@ -9,6 +9,7 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -27,7 +28,7 @@ import com.google.common.cache.LoadingCache;
 import io.dropwizard.views.View;
 import io.dropwizard.views.ViewRenderer;
 import io.timparsons.dropwizard.views.LocaleView;
-import io.timparsons.dropwizard.views.config.Bundles;
+import io.timparsons.dropwizard.views.config.LocaleConfigurationUtility;
 import io.timparsons.dropwizard.views.config.LocaleMap;
 import io.timparsons.dropwizard.views.config.mustache.MustacheLocaleConfiguration;
 
@@ -43,11 +44,9 @@ public class MustacheLocaleViewRenderer implements ViewRenderer {
         @Override
         public LocaleMap load(Pair<Class<? extends LocaleView>, Locale> key) throws Exception {
             Class<? extends LocaleView> localeViewClass = key.getLeft();
-            Bundles bundlesAnnon = localeViewClass.getAnnotation(Bundles.class);
+            List<String> viewBundles = LocaleConfigurationUtility.getViewBundles(localeViewClass);
 
-            if (bundlesAnnon != null) {
-                String[] viewBundles = bundlesAnnon.value();
-
+            if (!viewBundles.isEmpty()) {
                 LocaleMap.Builder localeBundlesBuilder = LocaleMap.builder();
                 for (String bundle : viewBundles) {
                     localeBundlesBuilder.putAll(config.getLocaleBundle(key.getRight(), bundle));
