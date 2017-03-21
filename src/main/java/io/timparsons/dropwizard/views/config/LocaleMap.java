@@ -16,7 +16,7 @@ public class LocaleMap implements Map<String, LocaleMapValue> {
     private LocaleMap() {
     }
 
-    private LocaleMap(ImmutableMap<String, LocaleMapValue> map) {
+    private LocaleMap(final ImmutableMap<String, LocaleMapValue> map) {
         if (this.internalMap == null) {
             this.internalMap = map;
         }
@@ -37,7 +37,7 @@ public class LocaleMap implements Map<String, LocaleMapValue> {
          * Associates {@code key} with {@code value} in the built map. Duplicate
          * keys are not allowed, and will cause {@link #build} to fail.
          */
-        public Builder put(String key, LocaleMapValue value) {
+        public Builder put(final String key, final LocaleMapValue value) {
             builderMap.put(key, value);
             return this;
         }
@@ -49,7 +49,7 @@ public class LocaleMap implements Map<String, LocaleMapValue> {
          *
          * @since 11.0
          */
-        public Builder put(Entry<String, LocaleMapValue> entry) {
+        public Builder put(final Entry<String, LocaleMapValue> entry) {
             return put(entry.getKey(), entry.getValue());
         }
 
@@ -59,7 +59,7 @@ public class LocaleMap implements Map<String, LocaleMapValue> {
          * @throws NullPointerException
          *             if any key or value in {@code map} is null
          */
-        public Builder putAll(Map<String, LocaleMapValue> map) {
+        public Builder putAll(final Map<String, LocaleMapValue> map) {
             builderMap.putAll(map);
 
             return this;
@@ -95,7 +95,7 @@ public class LocaleMap implements Map<String, LocaleMapValue> {
             this.value = value;
         }
 
-        public String params(String... params) {
+        public String params(final String... params) {
             String parameterizedString = this.value;
 
             for (int i = 0; i < params.length; i++) {
@@ -122,35 +122,40 @@ public class LocaleMap implements Map<String, LocaleMapValue> {
     }
 
     @Override
-    public boolean containsKey(Object key) {
+    public boolean containsKey(final Object key) {
         return internalMap.containsKey(key);
     }
 
     @Override
-    public boolean containsValue(Object value) {
+    public boolean containsValue(final Object value) {
         return internalMap.containsValue(value);
     }
 
     @Override
-    public LocaleMapValue get(Object key) {
-        return internalMap.get(key);
+    public LocaleMapValue get(final Object key) {
+        LocaleMapValue value = internalMap.get(key);
+        if (value == null) {
+            value = new LocaleMapValue("[" + key.toString() + "]");
+        }
+
+        return value;
     }
 
     @Deprecated
     @Override
-    public LocaleMapValue put(String key, LocaleMapValue value) {
+    public LocaleMapValue put(final String key, final LocaleMapValue value) {
         throw new UnsupportedOperationException();
     }
 
     @Deprecated
     @Override
-    public LocaleMapValue remove(Object key) {
+    public LocaleMapValue remove(final Object key) {
         throw new UnsupportedOperationException();
     }
 
     @Deprecated
     @Override
-    public void putAll(Map m) {
+    public void putAll(final Map m) {
         throw new UnsupportedOperationException();
     }
 
