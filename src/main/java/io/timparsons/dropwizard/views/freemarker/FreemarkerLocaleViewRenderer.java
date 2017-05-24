@@ -39,7 +39,7 @@ public class FreemarkerLocaleViewRenderer implements ViewRenderer {
         private Map<String, String> baseConfig = ImmutableMap.of();
 
         @Override
-        public FreemarkerLocaleConfiguration load(Class<?> key) throws Exception {
+        public FreemarkerLocaleConfiguration load(final Class<?> key) throws Exception {
             final FreemarkerLocaleConfiguration configuration = new FreemarkerLocaleConfiguration(FREEMARKER_VERSION);
             configuration.setObjectWrapper(new DefaultObjectWrapperBuilder(FREEMARKER_VERSION).build());
             configuration.loadBuiltInEncodingMap();
@@ -51,7 +51,7 @@ public class FreemarkerLocaleViewRenderer implements ViewRenderer {
             return configuration;
         }
 
-        void setBaseConfig(Map<String, String> baseConfig) {
+        void setBaseConfig(final Map<String, String> baseConfig) {
             this.baseConfig = baseConfig;
         }
     }
@@ -59,7 +59,7 @@ public class FreemarkerLocaleViewRenderer implements ViewRenderer {
     private class LocaleLoader extends CacheLoader<Pair<Class<? extends LocaleView>, Locale>, LocaleMap> {
 
         @Override
-        public LocaleMap load(Pair<Class<? extends LocaleView>, Locale> key) throws Exception {
+        public LocaleMap load(final Pair<Class<? extends LocaleView>, Locale> key) throws Exception {
             final FreemarkerLocaleConfiguration configuration = configurationCache.getUnchecked(key.getLeft());
 
             Class<? extends LocaleView> localeViewClass = key.getLeft();
@@ -90,12 +90,12 @@ public class FreemarkerLocaleViewRenderer implements ViewRenderer {
     }
 
     @Override
-    public boolean isRenderable(View view) {
+    public boolean isRenderable(final View view) {
         return view.getTemplateName().endsWith(getSuffix());
     }
 
     @Override
-    public void render(View view, Locale locale, OutputStream output) throws IOException {
+    public void render(final View view, final Locale locale, final OutputStream output) throws IOException {
 
         try {
             Template template = null;
@@ -105,8 +105,7 @@ public class FreemarkerLocaleViewRenderer implements ViewRenderer {
             if (LocaleView.class.isInstance(view)) {
                 @SuppressWarnings("unchecked")
                 Class<LocaleView> viewClass = (Class<LocaleView>) view.getClass();
-                final LocaleMap viewLocaleBundles = bundleCache
-                        .getUnchecked(new ImmutablePair<Class<? extends LocaleView>, Locale>(viewClass, locale));
+                final LocaleMap viewLocaleBundles = getViewBundles(viewClass, locale);
 
                 ((LocaleView) view).setMessageBundle(viewLocaleBundles);
 
@@ -121,7 +120,7 @@ public class FreemarkerLocaleViewRenderer implements ViewRenderer {
     }
 
     @Override
-    public void configure(Map<String, String> baseConfig) {
+    public void configure(final Map<String, String> baseConfig) {
         this.loader.setBaseConfig(baseConfig);
 
         boolean devMode = false;
@@ -151,6 +150,10 @@ public class FreemarkerLocaleViewRenderer implements ViewRenderer {
     public void clearCache() {
         configurationCache.invalidateAll();
         bundleCache.invalidateAll();
+    }
+
+    public LocaleMap getViewBundles(final Class<? extends LocaleView> view, final Locale locale) {
+        return bundleCache.getUnchecked(new ImmutablePair<Class<? extends LocaleView>, Locale>(view, locale));
     }
 
 }
