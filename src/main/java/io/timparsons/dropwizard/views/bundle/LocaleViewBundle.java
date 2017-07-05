@@ -15,10 +15,10 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewConfigurable;
-import io.dropwizard.views.ViewMessageBodyWriter;
 import io.dropwizard.views.ViewRenderer;
 import io.timparsons.dropwizard.views.freemarker.FreemarkerLocaleViewRenderer;
 import io.timparsons.dropwizard.views.mustache.MustacheLocaleViewRenderer;
+import io.timparsons.dropwizard.views.writer.ViewMessageBodyWriter;
 
 public class LocaleViewBundle<T extends Configuration> implements ConfiguredBundle<T>, ViewConfigurable<T> {
     private FreemarkerLocaleViewRenderer freemarkerLocaleViewRenderer;
@@ -41,17 +41,17 @@ public class LocaleViewBundle<T extends Configuration> implements ConfiguredBund
         this.viewRenderers = ImmutableSet.copyOf(renderers);
     }
 
-    public LocaleViewBundle(Iterable<ViewRenderer> viewRenderers) {
+    public LocaleViewBundle(final Iterable<ViewRenderer> viewRenderers) {
         this.viewRenderers = ImmutableSet.copyOf(viewRenderers);
     }
 
     @Override
-    public Map<String, Map<String, String>> getViewConfiguration(T configuration) {
+    public Map<String, Map<String, String>> getViewConfiguration(final T configuration) {
         return ImmutableMap.of();
     }
 
     @Override
-    public void run(T configuration, Environment environment) throws Exception {
+    public void run(final T configuration, final Environment environment) throws Exception {
         final Map<String, Map<String, String>> options = getViewConfiguration(configuration);
         for (ViewRenderer viewRenderer : viewRenderers) {
             final Map<String, String> viewOptions = options.get(viewRenderer.getSuffix());
@@ -61,7 +61,7 @@ public class LocaleViewBundle<T extends Configuration> implements ConfiguredBund
     }
 
     @Override
-    public void initialize(Bootstrap<?> bootstrap) {
+    public void initialize(final Bootstrap<?> bootstrap) {
         // nothing doing
     }
     

@@ -129,13 +129,13 @@ public class FreemarkerLocaleViewRenderer implements ViewRenderer {
             devMode = baseConfig.get("STAGE").equalsIgnoreCase("DEVELOPMENT");
         }
 
-        CacheBuilder configBuilder = CacheBuilder.newBuilder().concurrencyLevel(128);
+        CacheBuilder<Object, Object> configBuilder = CacheBuilder.newBuilder().concurrencyLevel(128);
         if (devMode) {
             configBuilder.expireAfterWrite(1L, TimeUnit.SECONDS);
         }
         this.configurationCache = configBuilder.build(loader);
 
-        CacheBuilder bundleBuilder = CacheBuilder.newBuilder().concurrencyLevel(128);
+        CacheBuilder<Object, Object> bundleBuilder = CacheBuilder.newBuilder().concurrencyLevel(128);
         if (devMode) {
             bundleBuilder.expireAfterWrite(1L, TimeUnit.SECONDS);
         }
