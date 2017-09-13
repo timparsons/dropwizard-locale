@@ -99,7 +99,11 @@ public class LocaleMap implements Map<String, LocaleMapValue> {
             String parameterizedString = this.value;
 
             for (int i = 0; i < params.length; i++) {
-                parameterizedString = parameterizedString.replaceAll("\\{" + i + "\\}", params[i]);
+            	String param = params[i];
+            	//Sanitizing input. See java.util.regex.Matcher#appendReplacement()
+        		param = param.replace("\\", "\\\\");
+        		param = param.replace("$", "\\$");
+                parameterizedString = parameterizedString.replaceAll("\\{" + i + "\\}", param);
             }
 
             return parameterizedString;
