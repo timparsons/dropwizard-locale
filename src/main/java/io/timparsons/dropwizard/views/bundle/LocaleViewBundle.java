@@ -54,8 +54,10 @@ public class LocaleViewBundle<T extends Configuration> implements ConfiguredBund
     public void run(final T configuration, final Environment environment) throws Exception {
         final Map<String, Map<String, String>> options = getViewConfiguration(configuration);
         for (ViewRenderer viewRenderer : viewRenderers) {
-            final Map<String, String> viewOptions = options.get(viewRenderer.getSuffix());
-            viewRenderer.configure(firstNonNull(viewOptions, Collections.emptyMap()));
+            if(options.containsKey(viewRenderer.getSuffix())) {
+                final Map<String, String> viewOptions = options.get(viewRenderer.getSuffix());
+                viewRenderer.configure(firstNonNull(viewOptions, Collections.emptyMap()));
+            }
         }
         environment.jersey().register(new ViewMessageBodyWriter(environment.metrics(), viewRenderers));
     }
